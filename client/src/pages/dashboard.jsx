@@ -1,19 +1,18 @@
-import React from "react";
+import clsx from "clsx";
+import React, { useEffect } from "react";
+import { FaNewspaper } from "react-icons/fa";
+import { FaArrowsToDot } from "react-icons/fa6";
+import { LuClipboardEdit } from "react-icons/lu";
 import {
   MdAdminPanelSettings,
   MdKeyboardArrowDown,
   MdKeyboardArrowUp,
   MdKeyboardDoubleArrowUp,
 } from "react-icons/md";
-import { LuClipboardEdit } from "react-icons/lu";
-import { FaNewspaper, FaUsers } from "react-icons/fa";
-import { FaArrowsToDot } from "react-icons/fa6";
-import moment from "moment";
+import { fetchDashboardDetails } from "../APIS/Apis";
 import { summary } from "../assets/data";
-import clsx from "clsx";
-import { BGS, PRIOTITYSTYELS, TASK_TYPE, getInitials } from "../utils";
-import UserInfo from "../components/UserInfo";
-import { useGetDasboardStatsQuery } from "../redux/slices/apiSlice";
+import { PRIOTITYSTYELS, TASK_TYPE } from "../utils";
+import { useSelector, useDispatch } from "react-redux";
 
 const TaskTable = ({ tasks }) => {
   const ICONS = {
@@ -78,10 +77,24 @@ const TaskTable = ({ tasks }) => {
 
 
 const Dashboard = () => {
-  const totals = summary.tasks;
+
+  const { user } = useSelector((state) => state.auth);
 
 
-  const { data, isLoading, error } = useGetDasboardStatsQuery()
+  console.log(user);
+
+
+
+  const { tasks, loading, error } = useSelector((state) => state.tasks);
+  const data = fetchDashboardDetails()
+
+  const totals = data;
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchDashboardDetails())
+  }, [dispatch])
 
 
   const stats = [

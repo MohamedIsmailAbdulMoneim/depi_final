@@ -15,22 +15,22 @@ import { isAdminRoute, protectRoute } from "../middlewares/authMiddlewave.js";
 
 const router = express.Router();
 
-router.post("/create", protectRoute, isAdminRoute, createTask); // done
-router.post("/duplicate/:id", protectRoute, isAdminRoute, duplicateTask); // done
-router.post("/activity/:id", protectRoute, postTaskActivity); // done
+router.post("/create", createTask); // done
+router.post("/duplicate/:id", duplicateTask); // done
+router.post("/activity/:id", postTaskActivity); // done
 
-router.get("/dashboard", protectRoute, dashboardStatistics);
-router.get("/", protectRoute, getTasks); // done
-router.get("/:id", protectRoute, getTask); // done
+router.get("/dashboard", dashboardStatistics);
+router.get("/", getTasks); // done
+router.get("/:id", getTask); // done
 
-router.put("/create-subtask/:id", protectRoute, isAdminRoute, createSubTask); // done
-router.put("/update/:id", protectRoute, isAdminRoute, updateTask); // done
-router.put("/:id", protectRoute, isAdminRoute, trashTask); // done
+router.put("/create-subtask/:id", createSubTask); // done
+router.put("/update/:id", updateTask); // done
+router.put("/:id", trashTask); // done
 
 router.delete(
   "/delete-restore/:id?",
   protectRoute,
-  isAdminRoute,
+
   deleteRestoreTask
 );
 

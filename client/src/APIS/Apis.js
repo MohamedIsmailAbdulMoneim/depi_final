@@ -5,6 +5,8 @@ const API_URL = "/api";
 export const createTask = createAsyncThunk(
   "tasks/createTask",
   async (taskData, { rejectWithValue }) => {
+    console.log(taskData);
+
     try {
       const response = await fetch(`${API_URL}/task/create`, {
         method: "POST",
@@ -36,6 +38,20 @@ export const createActivity = createAsyncThunk(
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Could not create task activity");
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const fetchDashboardDetails = createAsyncThunk(
+  "tasks/fetchDashboardDetails",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_URL}/task/dashboard`);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Could not fetch tasks");
       return data;
     } catch (err) {
       return rejectWithValue(err.message);
@@ -152,6 +168,32 @@ export const createUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`http://localhost:8800/api/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData)
+      });
+
+      if (!response.ok) {
+        throw new Error("user not found")
+      } else {
+
+        return response;
+
+      }
+
+    } catch (error) {
+      return rejectWithValue(error.response);
     }
   }
 );

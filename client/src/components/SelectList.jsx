@@ -3,10 +3,13 @@ import React, { Fragment } from "react";
 import { BsChevronExpand } from "react-icons/bs";
 import { MdCheck } from "react-icons/md";
 
-const SelectList = ({ lists, selected, setSelected, label }) => {
+const SelectList = ({ lists, selected, setSelected, label, name }) => {
   return (
     <div className='w-full'>
       {label && <p className='text-slate-900 dark:text-gray-500'>{label}</p>}
+
+      {/* Hidden input to capture the selected value with the provided name */}
+      <input type="hidden" name={name} value={selected} />
 
       <Listbox value={selected} onChange={setSelected}>
         <div className='relative mt-1'>
@@ -30,8 +33,7 @@ const SelectList = ({ lists, selected, setSelected, label }) => {
                 <Listbox.Option
                   key={index}
                   className={({ active }) =>
-                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                      active ? "bg-amber-100 text-amber-900" : "text-gray-900"
+                    `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? "bg-amber-100 text-amber-900" : "text-gray-900"
                     }`
                   }
                   value={list}
@@ -39,9 +41,8 @@ const SelectList = ({ lists, selected, setSelected, label }) => {
                   {({ selected }) => (
                     <>
                       <span
-                        className={`block truncate ${
-                          selected ? "font-medium" : "font-normal"
-                        }`}
+                        className={`block truncate ${selected ? "font-medium" : "font-normal"
+                          }`}
                       >
                         {list}
                       </span>

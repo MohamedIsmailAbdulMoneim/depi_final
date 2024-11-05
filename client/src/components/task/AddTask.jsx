@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createTask } from "../../APIS/Apis";
 import ModalWrapper from "../ModalWrapper";
 import { Dialog } from "@headlessui/react";
 import Textbox from "../Textbox";
@@ -11,26 +13,34 @@ import Button from "../Button";
 const LISTS = ["TODO", "IN PROGRESS", "COMPLETED"];
 const PRIORIRY = ["HIGH", "MEDIUM", "NORMAL", "LOW"];
 
-const uploadedFileURLs = [];
 
 const AddTask = ({ open, setOpen }) => {
-  const task = "";
+  const dispatch = useDispatch();
 
+  const task = "";
   const {
     register,
     handleSubmit,
+    setValue, // to manually set value for selects
     formState: { errors },
   } = useForm();
+
   const [team, setTeam] = useState(task?.team || []);
   const [stage, setStage] = useState(task?.stage?.toUpperCase() || LISTS[0]);
-  const [priority, setPriority] = useState(
-    task?.priority?.toUpperCase() || PRIORIRY[2]
-  );
+  const [priority, setPriority] = useState(task?.priority?.toUpperCase() || PRIORIRY[2]);
   const [assets, setAssets] = useState([]);
   const [uploading, setUploading] = useState(false);
 
-  const submitHandler = () => {};
+  // Manually update the form values for Select components
+  const submitHandler = (data) => {
+    data.stage = stage;   // add stage value manually
+    data.priority = priority; // add priority value manually
+    console.log(data);
 
+    dispatch(createTask(data));
+  };
+
+  // Handle asset selection
   const handleSelect = (e) => {
     setAssets(e.target.files);
   };
@@ -60,11 +70,15 @@ const AddTask = ({ open, setOpen }) => {
             <UserList setTeam={setTeam} team={team} />
 
             <div className='flex gap-4'>
+              {/* For Task Stage */}
               <SelectList
                 label='Task Stage'
                 lists={LISTS}
                 selected={stage}
-                setSelected={setStage}
+                setSelected={(value) => {
+                  setStage(value);
+                  setValue("stage", value); // manually set value in form
+                }}
               />
 
               <div className='w-full'>
@@ -74,20 +88,22 @@ const AddTask = ({ open, setOpen }) => {
                   name='date'
                   label='Task Date'
                   className='w-full rounded'
-                  register={register("date", {
-                    required: "Date is required!",
-                  })}
+                  register={register("date", { required: "Date is required!" })}
                   error={errors.date ? errors.date.message : ""}
                 />
               </div>
             </div>
 
             <div className='flex gap-4'>
+              {/* For Priority Level */}
               <SelectList
                 label='Priority Level'
                 lists={PRIORIRY}
                 selected={priority}
-                setSelected={setPriority}
+                setSelected={(value) => {
+                  setPriority(value);
+                  setValue("priority", value); // manually set value in form
+                }}
               />
 
               <div className='w-full flex items-center justify-center mt-4'>
@@ -111,14 +127,12 @@ const AddTask = ({ open, setOpen }) => {
 
             <div className='bg-gray-50 py-6 sm:flex sm:flex-row-reverse gap-4'>
               {uploading ? (
-                <span className='text-sm py-2 text-red-500'>
-                  Uploading assets
-                </span>
+                <span className='text-sm py-2 text-red-500'>Uploading assets</span>
               ) : (
                 <Button
                   label='Submit'
                   type='submit'
-                  className='bg-blue-600 px-8 text-sm font-semibold text-white hover:bg-blue-700  sm:w-auto'
+                  className='bg-blue-600 px-8 text-sm font-semibold text-white hover:bg-blue-700 sm:w-auto'
                 />
               )}
 
@@ -135,5 +149,6 @@ const AddTask = ({ open, setOpen }) => {
     </>
   );
 };
+
 
 export default AddTask;

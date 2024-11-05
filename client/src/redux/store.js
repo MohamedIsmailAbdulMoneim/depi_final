@@ -8,9 +8,7 @@ const store = configureStore({
     tasks: taskReducer,
     // Add your API reducer here
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(apiSlice.middleware), // Add the API middleware
-  devTools: true,
+
 });
 
 export default store;

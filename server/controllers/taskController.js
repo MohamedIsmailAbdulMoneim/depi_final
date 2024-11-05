@@ -1,7 +1,7 @@
 import Notice from "../models/notification.js";
 import Task from "../models/task.js";
 
-                    // createTask
+// createTask
 
 export const createTask = async (req, res) => {
     try {
@@ -42,7 +42,7 @@ export const createTask = async (req, res) => {
 
 // ===============================================================
 
-                    // duplicateTask
+// duplicateTask
 
 export const duplicateTask = async (req, res) => {
     try {
@@ -90,7 +90,7 @@ export const duplicateTask = async (req, res) => {
 
 // ===============================================================
 
-                    // postTaskActivity
+// postTaskActivity
 
 export const postTaskActivity = async (req, res) => {
     try {
@@ -119,9 +119,10 @@ export const postTaskActivity = async (req, res) => {
 
 //   ==================================================
 
-                    // dashboardStatistics
+// dashboardStatistics
 
 export const dashboardStatistics = async (req, res) => {
+
     try {
         const { userId, isAdmin } = req.user;
 
@@ -197,7 +198,7 @@ export const dashboardStatistics = async (req, res) => {
 
 //   ==================================================
 
-                    //getTasks
+//getTasks
 
 export const getTasks = async (req, res) => {
     try {
@@ -229,7 +230,7 @@ export const getTasks = async (req, res) => {
 
 //   ==================================================
 
-                    //get Single Task
+//get Single Task
 
 export const getTask = async (req, res) => {
     try {
@@ -257,7 +258,7 @@ export const getTask = async (req, res) => {
 
 //   ==================================================
 
-                    // createSubTask
+// createSubTask
 
 export const createSubTask = async (req, res) => {
     try {
@@ -287,7 +288,7 @@ export const createSubTask = async (req, res) => {
 
 //   ==================================================
 
-                    // updateTask
+// updateTask
 
 export const updateTask = async (req, res) => {
     try {
@@ -315,7 +316,7 @@ export const updateTask = async (req, res) => {
 
 //   ==================================================
 
-                    // trashTask
+// trashTask
 
 export const trashTask = async (req, res) => {
     try {
@@ -338,7 +339,7 @@ export const trashTask = async (req, res) => {
 
 //   ==================================================
 
-                    // deleteRestoreTask
+// deleteRestoreTask
 
 export const deleteRestoreTask = async (req, res) => {
     try {

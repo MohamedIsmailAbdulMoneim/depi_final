@@ -4,11 +4,15 @@ import { useNavigate } from "react-router-dom";
 import Textbox from "../components/Textbox";
 import Button from "../components/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { useLoginMutation } from "../redux/slices/authSlice";
+import { loginUser } from "../APIS/Apis";
 import { setCredentials } from "../redux/slices/authSlice";
 
 const Login = () => {
   const { user } = useSelector((state) => state.auth);
+
+
+
+
   const {
     register,
     handleSubmit,
@@ -16,15 +20,16 @@ const Login = () => {
   } = useForm();
 
   const navigate = useNavigate();
-  const dispatch = useDispatch()
 
-  const [login, { isLoading }] = useLoginMutation()
+  const dispatch = useDispatch()
 
   const submitHandler = async (data) => {
     try {
-      const result = await login(data);
+      const result = await dispatch(loginUser(data));
 
-      dispatch(setCredentials(result))
+
+      if (result.status === 401) return
+
       navigate("/")
 
     } catch (error) {
@@ -34,7 +39,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    user && navigate("/dashboard");
+    // user && navigate("/dashboard");
   }, [user]);
 
   return (

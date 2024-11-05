@@ -44,9 +44,15 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
+
     const { email, password } = req.body;
 
+
+
     const user = await User.findOne({ email });
+    console.log(user);
+
+
 
     if (!user) {
       return res
@@ -55,13 +61,16 @@ export const loginUser = async (req, res) => {
     }
 
     if (!user?.isActive) {
+
       return res.status(401).json({
         status: false,
         message: "User account has been deactivated, contact the administrator",
       });
     }
 
-    const isMatch = await user.matchPassword(password);
+    const isMatch = user.password === password;
+
+
 
     if (user && isMatch) {
       createJWT(res, user._id);
@@ -70,12 +79,13 @@ export const loginUser = async (req, res) => {
 
       res.status(200).json(user);
     } else {
+      console.log('dsadsasdasdasdsad');
+
       return res
         .status(401)
         .json({ status: false, message: "Invalid email or password" });
     }
   } catch (error) {
-    console.log(error);
     return res.status(400).json({ status: false, message: error.message });
   }
 };
@@ -130,8 +140,8 @@ export const updateUserProfile = async (req, res) => {
       isAdmin && userId === _id
         ? userId
         : isAdmin && userId !== _id
-        ? _id
-        : userId;
+          ? _id
+          : userId;
 
     const user = await User.findById(id);
 
@@ -224,9 +234,8 @@ export const activateUserProfile = async (req, res) => {
 
       res.status(201).json({
         status: true,
-        message: `User account has been ${
-          user.isActive ? "activated" : "disabled"
-        }`,
+        message: `User account has been ${user.isActive ? "activated" : "disabled"
+          }`,
       });
     } else {
       res.status(404).json({ status: false, message: "User not found" });

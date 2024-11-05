@@ -1,90 +1,7 @@
-// import React, { useState } from "react";
-// import { FaList } from "react-icons/fa";
-// import { MdGridView } from "react-icons/md";
-// import { useParams } from "react-router-dom";
-// import Loading from "../components/Loader";
-// import Title from "../components/Title";
-// import Button from "../components/Button";
-// import { IoMdAdd } from "react-icons/io";
-// import Tabs from "../components/Tabs";
-// import TaskTitle from "../components/TaskTitle";
-// import BoardView from "../components/BoardView";
-// import { tasks } from "../assets/data";
-// import Table from "../components/task/Table";
-// import AddTask from "../components/task/AddTask";
-
-// const TABS = [
-//   { title: "Board View", icon: <MdGridView /> },
-//   { title: "List View", icon: <FaList /> },
-// ];
-
-// const TASK_TYPE = {
-//   todo: "bg-blue-600",
-//   "in progress": "bg-yellow-600",
-//   completed: "bg-green-600",
-// };
-
-// const Tasks = () => {
-//   const params = useParams();
-
-//   const [selected, setSelected] = useState(0);
-//   const [open, setOpen] = useState(false);
-//   const [loading, setLoading] = useState(false);
-
-//   const status = params?.status || "";
-
-//   return loading ? (
-//     <div className='py-10'>
-//       <Loading />
-//     </div>
-//   ) : (
-//     <div className='w-full'>
-//       <div className='flex items-center justify-between mb-4'>
-//         <Title title={status ? `${status} Tasks` : "Tasks"} />
-
-//         {!status && (
-//           <Button
-//             onClick={() => setOpen(true)}
-//             label='Create Task'
-//             icon={<IoMdAdd className='text-lg' />}
-//             className='flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md py-2 2xl:py-2.5'
-//           />
-//         )}
-//       </div>
-
-//       <Tabs tabs={TABS} setSelected={setSelected}>
-//         {!status && (
-//           <div className='w-full flex justify-between gap-4 md:gap-x-12 py-4'>
-//             <TaskTitle label='To Do' className={TASK_TYPE.todo} />
-//             <TaskTitle
-//               label='In Progress'
-//               className={TASK_TYPE["in progress"]}
-//             />
-//             <TaskTitle label='completed' className={TASK_TYPE.completed} />
-//           </div>
-//         )}
-
-//         {selected !== 1 ? (
-//           <BoardView tasks={tasks} />
-//         ) : (
-//           <div className='w-full'>
-//             <Table tasks={tasks} />
-//           </div>
-//         )}
-//       </Tabs>
-
-//       <AddTask open={open} setOpen={setOpen} />
-//     </div>
-//   );
-// };
-
-// export default Tasks;
-
-
 import React, { useEffect, useState } from "react";
 import { FaList } from "react-icons/fa";
 import { MdGridView } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Loading from "../components/Loader";
 import Title from "../components/Title";
@@ -111,19 +28,41 @@ const TASK_TYPE = {
 const Tasks = () => {
   const params = useParams();
   const dispatch = useDispatch();
+  const location = useLocation();
 
-  // Get tasks and loading state from the Redux store
   const { tasks, loading, error } = useSelector((state) => state.tasks);
 
   const [selected, setSelected] = useState(0);
   const [open, setOpen] = useState(false);
 
-  const status = params?.status || "";
+  const [taskFilter, setTaskFilter] = useState("completed");
 
-  // Fetch tasks when the component mounts
   useEffect(() => {
-    dispatch(fetchTasks()); // Dispatch the action to fetch tasks from the API
+    dispatch(fetchTasks());
   }, [dispatch]);
+
+  useEffect(() => {
+    const pathname = location.pathname;
+    if (pathname === "/completed/completed") {
+      setTaskFilter("completed");
+    } else if (pathname === "/in-progress/in_progress") {
+
+      setTaskFilter("in progress");
+    }
+    else if (pathname === "/tasks") {
+
+      setTaskFilter("tasks");
+    }
+    else if (pathname === "/todo/todo") {
+
+      setTaskFilter("todo");
+    } else {
+      setTaskFilter("all");
+    }
+  }, [location.pathname]);
+
+  console.log("All tasks:", tasks);
+  console.log("Task filter:", taskFilter);
 
   if (loading) {
     return (
@@ -141,12 +80,28 @@ const Tasks = () => {
     );
   }
 
+  const filteredTasks = tasks.filter((task) => {
+
+    if (taskFilter === "tasks") return true;
+
+    return task.stage === taskFilter
+
+
+
+
+  });
+
+  console.log("Filtered tasks:", filteredTasks);
+
+
+
+
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-4">
-        <Title title={status ? `${status} Tasks` : "Tasks"} />
+        <Title title={taskFilter !== "all" ? `${taskFilter} Tasks` : "Tasks"} />
 
-        {!status && (
+        {taskFilter === "tasks" && (
           <Button
             onClick={() => setOpen(true)}
             label="Create Task"
@@ -157,22 +112,36 @@ const Tasks = () => {
       </div>
 
       <Tabs tabs={TABS} setSelected={setSelected}>
-        {!status && (
-          <div className="w-full flex justify-between gap-4 md:gap-x-12 py-4">
-            <TaskTitle label="To Do" className={TASK_TYPE.todo} />
+        <div className="w-full flex justify-between gap-4 md:gap-x-12 py-4">
+          {taskFilter === "all" && (
+            <>
+              <TaskTitle label="To Do" className={TASK_TYPE.todo} />
+              <TaskTitle
+                label="In Progress"
+                className={TASK_TYPE["in progress"]}
+              />
+              <TaskTitle label="Completed" className={TASK_TYPE.completed} />
+            </>
+          )}
+          {taskFilter === "completed" && (
+            <TaskTitle label="Completed" className={TASK_TYPE.completed} />
+          )}
+          {taskFilter === "in progress" && (
             <TaskTitle
               label="In Progress"
               className={TASK_TYPE["in progress"]}
             />
-            <TaskTitle label="completed" className={TASK_TYPE.completed} />
-          </div>
-        )}
+          )}
+          {taskFilter === "todo" && (
+            <TaskTitle label="To Do" className={TASK_TYPE.todo} />
+          )}
+        </div>
 
         {selected !== 1 ? (
-          <BoardView tasks={tasks} /> // Use the tasks from Redux
+          <BoardView tasks={filteredTasks} />
         ) : (
           <div className="w-full">
-            <Table tasks={tasks} /> // Use the tasks from Redux
+            <Table tasks={filteredTasks} />
           </div>
         )}
       </Tabs>

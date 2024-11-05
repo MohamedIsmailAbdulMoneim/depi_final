@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createTask, createActivity, fetchTasks, fetchTask, duplicateTask, createSubTask, updateTask, trashTask } from "../../APIS/Apis";
+import { createTask, createActivity, fetchDashboardDetails, fetchTasks, fetchTask, duplicateTask, createSubTask, updateTask, trashTask } from "../../APIS/Apis";
 
 const initialState = {
   tasks: [],
@@ -45,6 +45,20 @@ const taskSlice = createSlice({
         state.successMessage = "Task created successfully!";
       })
       .addCase(createActivity.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+
+    builder
+      .addCase(fetchDashboardDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchDashboardDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.tasks = action.payload;
+      })
+      .addCase(fetchDashboardDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

@@ -1,10 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { user } from "../../assets/data";
+import { createUser, loginUser } from "../../APIS/Apis";
+
+
+
+
 
 const initialState = {
   user: localStorage.getItem("userInfo")
     ? JSON.parse(localStorage.getItem("userInfo"))
-    : user,
+    : null,
   loading: false,
   error: null,
   successMessage: null,
@@ -45,6 +49,21 @@ const authSlice = createSlice({
         state.successMessage = "User registered successfully!";
       })
       .addCase(createUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to register user";
+      });
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        localStorage.setItem("userInfo", JSON.stringify(action.payload));
+        state.successMessage = "User registered successfully!";
+      })
+      .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Failed to register user";
       });
